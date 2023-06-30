@@ -388,6 +388,14 @@ while True:
 
     if event == '-Submit-': ### Submit data to database
         db_flag=True
+        
+        # update Comments
+        if len(values['-ML-'])<255:
+            session['Comments']=[values['-ML-']]
+        else:
+            session['Comments']=[values['-ML-'][:255]]
+        sess_df['Comments'] = session['Comments']
+        
         try:
             # write output cons session and results to db
             sess_cols = 'ADate,[Op1],[Op2],[T],[P],Electrometer,[V],MachineName,GA,Chamber,kQ,ks,kelec,kpol,NDW,TPC,Humidity,Comments'

@@ -24,17 +24,6 @@ import spotanalysis.report as rp
 
 #specify input params
 db_cols = cs.db_cols
-#data_dir = "O:\protons\Work in Progress\AlexG\PostISM_Jig\\test_data"
-#current_path = os.path.abspath('.')
-#current_path = os.path.abspath(os.path.dirname(__file__))
-#gr_path = os.path.join(current_path, 'spotanalysis', 'def_gradient_ratio.png')
-#prof_path  = os.path.join(current_path, 'spotanalysis', 'profiles_per_spot.png')
-#gantry = 'Gantry 2'
-#gantry_angle = '0'
-#values = {'-G-': gantry, 'GA': gantry_angle,'ADate': '1900-01-01', '-Fldr-': data_dir, '-ML-': "TEST COMMENTS", '-Op1-': 'AGr', '-Op2-': ""}
-#spotE = [240, 200, 150, 100, 70]
-
-
 
 # sort folders and prepare report directory
 def organise_logos_dirs(values=None):
@@ -85,11 +74,10 @@ def output_results(results=None):
     op_results['D ref Gy'] = [round(float(x),4) for x,f in zip(results['Rref'],duplicate_flag) if f]
     op_results['R range'] = [round(float(x),3) for x,f in zip(results['Rrange prcnt'],duplicate_flag) if f]
     op_results['D diff'] = [round(float(x),3) for x,f in zip(results['Rdelta'],duplicate_flag) if f]
-    print(op_results)
     return op_results
 
 # create spot grid results
-def spot_results(spot_dirs=None, spotE=None, values=None, db_cols=cs.db_cols):
+def spot_results(spot_dirs=None, spotE=None, values=None, db_cols=db_cols):
     spotpatterns = {}
     # for i in range(1, nbmp+1):
     print("Processing spots...")

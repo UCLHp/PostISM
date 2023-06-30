@@ -1,0 +1,4 @@
+[submodule "spotanalysis"]
+	path = spotanalysis
+	url = https://github.com/UCLHp/spot-analysis.git
+	branch = sav_spot_analysis

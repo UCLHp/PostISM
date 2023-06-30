@@ -387,7 +387,6 @@ while True:
 
 
     if event == '-Submit-': ### Submit data to database
-        print('### WRITE TO DATABASE CURRENTLY DISABLED ###')
         db_flag=True
         try:
             # write output cons session and results to db
@@ -400,7 +399,7 @@ while True:
                            sess_cols,
                            res_cols)
         except:
-            print('outputs failed write to DB')
+            print('outputs failed to write to DB')
             db_flag=False
 
         try:
@@ -414,7 +413,7 @@ while True:
                            sess_cols,
                            res_cols)
         except:
-            print('chevrons failed write to DB')
+            print('chevrons failed to write to DB')
             db_flag=False
         
         try:

@@ -676,14 +676,11 @@ def push_spot_session(session_data, conn, cursor):
           INSERT INTO SpotPositionSession VALUES (?, ?, ?, ?, ?, ?, ?, ?)
           '''
     try:
-        print('################# SESSION DATA ################')
-        print(session_data)
         cursor.execute(sql, session_data)
         conn.commit()
         return True
     except:
         conn = None
-        print(f' >> failed to write session data to database')
         return False
 
 
@@ -693,12 +690,8 @@ def push_spot_results(spot_results, conn, cursor):
           '''
     try:
         for i, val in enumerate(spot_results):
-            print('################# SPOT RESULT ################')
-            print(val)
             cursor.execute(sql, val)
             conn.commit()
-            if i == 0:
-                print(f'>> All {val[2]}MeV spot results {val[4]} written to database ')
     except:
         conn = None
 
@@ -713,20 +706,29 @@ def spots_to_db(all_data=None, spotpatterns=None, values=None, values2={'-COMMEN
     device = 'XRV-' + spotpatterns['240'].output.device
     gantry = values['-G-']
     # SpotPositionSession (8 entries)
-    print('########## ' + gantry)
     sess_data = [values['ADate'], gantry, device, values['GA'], values['-Op1-'], values['-Op2-'], session_comment, None]
     # push the session data to database
     new_connection = 'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=%s;PWD=%s'%(DB_PATH,PASSWORD) 
     conn = pypyodbc.connect(new_connection) 
     cursor = conn.cursor()
-    
-    push_session = push_spot_session(sess_data, conn, cursor)
+    print("Writing session to database...")
+    try:
+        push_session = push_spot_session(sess_data, conn, cursor)
+        print('Session SpotPositionSession Write Status: True')
+    except:
+        print('Session SpotPositionSession Write Status: False')
     if push_session == True:
         # push results data to database
-        for key in all_data.keys():
-            for i,_ in enumerate(all_data[key]):
-                all_data[key][i][0]=values['ADate']
-                all_data[key][i][1]=gantry
-            push_spot_results(all_data[key], conn, cursor)
-    conn=None
+        print("Writing results to database...")
+        try:
+            for key in all_data.keys():
+                for i,_ in enumerate(all_data[key]):
+                    all_data[key][i][0]=values['ADate']
+                    all_data[key][i][1]=gantry
+                push_spot_results(all_data[key], conn, cursor)
+            print('Session SpotPositionResults Write Status: True')
+            conn=None
+        except:
+            print('Session SpotPositionResults Write Status: False')
+            conn=None
 

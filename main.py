@@ -11,6 +11,7 @@ from checks import *
 from chevron import *
 import analysis as ana
 from gui import *
+import splash_screen as sph
 import spotanalysis.constants as cs
 
 ### import data from database
@@ -115,6 +116,12 @@ def calc_metrics(i):
         window['diff'+i]('',background_color=diff_color, text_color='black')
         window['ad'+i]('')
 
+
+### Close splash screen if one exists
+try:
+    sph.close_splash()
+except:
+    print("Splash screen error")
 
 ### Generate GUI
 # dropdown list data

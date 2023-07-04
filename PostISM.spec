@@ -18,6 +18,13 @@ a = Analysis(['main.py'],
 	win_no_prefer_redirects=None,
 	win_private_assemblies=None,
 	cipher=block_cipher)
+
+splash = Splash('Splash.jpg',
+                binaries=a.binaries,
+                datas=a.datas,
+                text_pos=None,
+                text_size=12,
+                text_color='black')
 			 
 dict_tree = Tree(get_pandas_path(), prefix='pandas', excludes=["*.pyc"])
 a.datas += dict_tree
@@ -27,6 +34,8 @@ pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 exe = EXE(pyz,
       a.scripts,
+	  splash,
+	  splash.binaries,
 	  a.binaries,
 	  a.zipfiles,
 	  a.datas,

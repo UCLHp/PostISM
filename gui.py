@@ -115,8 +115,9 @@ def build_window(Op, kq, rbe, El, G, Chtype, V, Rng, Ch, layers):
     button_layout = [
         [sg.B('Check Session', key='-AnalyseS-'),
          sg.B('Submit to Database', disabled=True, key='-Submit-'),
-         sg.FolderBrowse('Export to CSV', key='-CSV_WRITE-', disabled=True, target='-Export-'), sg.In(key='-Export-', enable_events=True, visible=False),
-         sg.B('Clear Results', button_color='red', key='-NxtSess-')],
+         sg.FolderBrowse('Export to CSV', key='-CSV_WRITE-', disabled=True, target='-Export-', visible=False), sg.In(key='-Export-', enable_events=True, visible=False),
+         sg.B('Clear Results', button_color='red', key='-NxtSess-'),
+         sg.ProgressBar(max_value=10, orientation='h', size=(48, 20), key='progress')],
     ]
 
     #combine layout elements

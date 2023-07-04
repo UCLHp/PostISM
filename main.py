@@ -127,6 +127,8 @@ en_layers = ['5']
 layers = [[240,200,150,100,70]]
 # create GUI window
 window = build_window(Op, kq, rbe, El, G, Chtype, V, Rng, Ch, layers)
+# progress bar
+progress_bar = window['progress']
 # GUI flags
 tpc=None
 session_analysed = False
@@ -185,14 +187,17 @@ while True:
     ### reset analysed flag if there is just about any event
     if event in window.key_dict.keys() and event not in ['-Submit-','-AnalyseS-','-Export-','-ML-','-NEXT-','-NEXTE-','-PREV-',sg.WIN_CLOSED]:
         session_analysed=False
+        progress_bar.update_bar(0)
         window['-CSV_WRITE-'](disabled=True) # disable csv export button
         window['-Submit-'](disabled=True) # disable access export button
         
     ### Button event actions
     if event == '-AnalyseS-': ### Analyse results 
+        progress_bar.update_bar(0)
         window['-AnalyseS-'](disabled=True)
         # initialise session integrity flag
         session_analysed=True       
+        progress_bar.update_bar(1)
         # output consistency session dict
         session = {}
         # output consistency results dict
@@ -211,9 +216,11 @@ while True:
         # check data integrity
         print('Analysing...')
         anal_flag = pre_analysis_check(values, layers)
+        progress_bar.update_bar(2)
         if anal_flag[-1][0]:
             session_analysed = False
             print('ERROR: Session not analysed - check all information is entered correctly (Err Code: '+str(anal_flag[-1])+')')
+            progress_bar.update_bar(0)
 
         if session_analysed:
             try:
@@ -239,9 +246,11 @@ while True:
                     session['Comments']=[values['-ML-']]
                 else:
                     session['Comments']=[values['-ML-'][:255]]
+                progress_bar.update_bar(3)
             except:
                 session_analysed = False
                 print('ERROR: Session not analysed - check session data is complete')
+                progress_bar.update_bar(0)
 
         if session_analysed:
             try:
@@ -267,15 +276,18 @@ while True:
                             results['RavgGy'].append(str(d_mean))
                             results['Rref'].append(str(refs[0][idx]))
                             results['Rdelta'].append(str(d_diff))
+                progress_bar.update_bar(4)
             except:
                 session_analysed = False
                 print('ERROR: Results not analysed - check all information is entered correctly')
+                progress_bar.update_bar(0)
                 sg.popup("Session not analysed","Check you have entered all information correctly")
 
         if len(results['R'])==0 and session_analysed:
             # Catch if no output measurements have been recorded
             session_analysed = False
             print('ERROR: Session not analysed - check output measurements')
+            progress_bar.update_bar(0)
             sg.popup("No Results","Enter some results before clicking Check Session")
 
 
@@ -283,6 +295,7 @@ while True:
         if not os.path.isdir(values['-Logos-']):
             session_analysed = False
             print('ERROR: Selected Logos directory does not exist')
+            progress_bar.update_bar(0)
             sg.popup("Invalid directory","Select a folder containing valid Logos data")
 
         if session_analysed:
@@ -291,43 +304,55 @@ while True:
                 ### CHEVRON and SPOT GRID FOLDER SORTING
                 chevron_dir, spot_dirs, report_dir = \
                     ana.organise_logos_dirs(values)
+                progress_bar.update_bar(5)
             except:
                 session_analysed = False
                 print('ERROR: Results not analysed - check Logos data')
+                progress_bar.update_bar(0)
                 sg.popup("No Results","Enter path to valid Logos data before clicking Check Session")
 
         if session_analysed:
             try:
                 ### CHEVRON DATA ANALYSIS
                 chev_results = ana.chevron_results(chevron_dir, values)
+                progress_bar.update_bar(6)
             except:
                 session_analysed = False
                 print('ERROR: Chevron results')
+                progress_bar.update_bar(0)
                 sg.popup("No Chevron Results","Unable to process Chevron data, check Logos files")
         
         if session_analysed:
             try:
                 ### SPOT GRID DATA ANALYSIS
                 df_spot, device, spotpatterns, all_data = ana.spot_results(spot_dirs, spotE, values, cs.db_cols)
+                progress_bar.update_bar(7)
             except:
                 session_analysed = False
                 print('ERROR: Spot grid results')
+                progress_bar.update_bar(0)
                 sg.popup("No Spot Grid Results","Unable to process Spot Grid data, check Logos files")
 
         if session_analysed:
             try:
                 ### GENERATE REPORT PDFs
                 ana.spot_report(df_spot, device, report_dir, values, spotE)
+                progress_bar.update_bar(8)
                 ana.chev_report(chev_results, values, 1.0, 0.5, os.path.join(report_dir,'02_chevron_report.pdf'))
+                progress_bar.update_bar(9)
                 report_results = ana.output_results(results)
+                progress_bar.update_bar(10)
                 ana.output_report(report_results, values, 1.0, 0.5, os.path.join(report_dir,'01_output_report.pdf'))
+                progress_bar.update_bar(11)
                 pdf_list = glob.glob(os.path.join(report_dir,'*.pdf'))
                 pdf_list.sort()
                 report_name = os.path.join(report_dir,'PostISM_Report.pdf')
                 ana.merge_reports(pdf_list, report_name)
+                progress_bar.update_bar(12)
             except:
                 session_analysed = False
                 print('ERROR: Reports not generated')
+                progress_bar.update_bar(0)
                 sg.popup("Reports not generated","Reports could not be generated, check config files and dependencies")
 
 
@@ -346,22 +371,28 @@ while True:
                 )
             chev_reslt_df['ADate']=values['ADate']
             chev_reslt_df = chev_reslt_df[['ADate','Energy MeV','D80 mm', 'Diff TPS mm', 'Diff NIST mm', 'Diff Baseline mm']]
+            progress_bar.update_bar(13)
             
         if os.path.isdir(values['-Logos-']) and session_analysed:
             db.review_dose(sess_df,reslt_df,values['-Logos-'])
+            progress_bar.update_bar(14)
             db.review_range(chev_results)
+            progress_bar.update_bar(15)
             print('Results analysed.')
         else:
             #deactivate buttons
             window['-CSV_WRITE-'](disabled=True)
             window['-Submit-'](disabled=True)
+            progress_bar.update_bar(0)
         window['-AnalyseS-'](disabled=False)
 
         if session_analysed:
             try:
                 subprocess.Popen([report_name],shell=True)
+                progress_bar.update_bar(16)
             except:
                 print('WARNING: Report could not be opened')
+                progress_bar.update_bar(0)
                 sg.popup("Report not displayed","Report could not be displayed, manually inspect the file:\n"+report_name)
 
                 
@@ -395,7 +426,7 @@ while True:
         else:
             session['Comments']=[values['-ML-'][:255]]
         sess_df['Comments'] = session['Comments']
-        
+
         try:
             # write output cons session and results to db
             sess_cols = 'ADate,[Op1],[Op2],[T],[P],Electrometer,[V],MachineName,GA,Chamber,kQ,ks,kelec,kpol,NDW,TPC,Humidity,Comments'
@@ -441,6 +472,7 @@ while True:
         else:
             window['-CSV_WRITE-'](disabled=True)
             window['-Submit-'](disabled=True)
+            progress_bar.update_bar(0)
 
 
     ### Populate Chamber ID list

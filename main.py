@@ -132,6 +132,7 @@ Rng = ['Low','Medium','High']
 Ch = Roos
 en_layers = ['5']
 layers = [[240,200,150,100,70]]
+humidity=''
 # create GUI window
 window = build_window(Op, kq, rbe, El, G, Chtype, V, Rng, Ch, layers)
 # progress bar
@@ -248,7 +249,9 @@ while True:
                 session['kpol']=[window['kpol'].get()]
                 session['NDW']=[window['ndw'].get()]
                 session['TPC']=[str(tpc)]
-                session['Humidity']=[values['H']]
+                humidity=values['H']
+                if humidity != '':
+                    session['Humidity']=[humidity]
                 if len(values['-ML-'])<255:
                     session['Comments']=[values['-ML-']]
                 else:
@@ -436,7 +439,10 @@ while True:
 
         try:
             # write output cons session and results to db
-            sess_cols = 'ADate,[Op1],[Op2],[T],[P],Electrometer,[V],MachineName,GA,Chamber,kQ,ks,kelec,kpol,NDW,TPC,Humidity,Comments'
+            if humidity != '':
+                sess_cols = 'ADate,[Op1],[Op2],[T],[P],Electrometer,[V],MachineName,GA,Chamber,kQ,ks,kelec,kpol,NDW,TPC,Humidity,Comments'
+            else:
+                sess_cols = 'ADate,[Op1],[Op2],[T],[P],Electrometer,[V],MachineName,GA,Chamber,kQ,ks,kelec,kpol,NDW,TPC,Comments'
             res_cols = 'Rindex,ADate,Energy,[R],RGy'
             db.write_to_db(sess_df,
                            reslt_df,

@@ -96,19 +96,24 @@ def pre_analysis_check(values, layers):
 
     # check Humidity
     try:
-        if not 0 <= float(values['H']) <= 100:
+        if re.fullmatch(r'^[0-9]\d*(\.\d+)?$', values['H']):
+            if not 0 <= float(values['H']) <= 100:
+                sg.popup("Invalid Value","Enter a decimal value for percentage humidity between 0 and 100")
+                check_fail.append([True,12])
+                return check_fail
+        elif not values['H'] in ['','NULL']:
             sg.popup("Invalid Value","Enter a percentage humidity between 0 and 100")
-            check_fail.append([True,12])
+            check_fail.append([True,13])
             return check_fail
     except:
         sg.popup("Invalid Value","Humidity error, check entered value")
-        check_fail.append([True,13])
+        check_fail.append([True,14])
         return check_fail
     
     # check chevron directory
     if not os.path.exists(values['-Logos-']):
         sg.popup("Invalid Logos Data","Specified Logos directory does not exist")
-        check_fail.append([True,14])
+        check_fail.append([True,15])
         return check_fail
     
     return check_fail

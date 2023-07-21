@@ -579,8 +579,7 @@ def write_session_data(conn,df_session,session_table,cols):
         Input:
             conn            database connection object
             df_session      dataframe of session table values
-    '''
-       
+    ''' 
     cursor = conn.cursor() 
     vals = re.sub(r"([^,]+)", "?", cols) 
     sql = '''
@@ -588,6 +587,8 @@ def write_session_data(conn,df_session,session_table,cols):
             VALUES (%s)
             '''%(session_table, cols, vals)
     data = df_session.values.tolist()[0] 
+    print(data)
+    print(cols)
     try:
         print("Writing session to database...")
         cursor.execute(sql, data)

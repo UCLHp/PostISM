@@ -108,7 +108,7 @@ def build_window(Op, kq, rbe, El, G, Chtype, V, Rng, Ch, layers):
 
     # Comments
     ml_layout = [
-        [sg.Multiline('No comment', key='-ML-', enable_events=True, size=(120,3))],
+        [sg.Multiline('Post-ISM', key='-ML-', enable_events=True, size=(120,3))],
     ]
 
     #buttons

@@ -213,7 +213,7 @@ def chev_report(chev_results=None, values=None, fail_oot=1.0, warn_oot=0.5, pdf_
     return
 
 # write output report
-def output_report(results=None, values=None, fail_oot=1.0, warn_oot=0.5, pdf_name='output_report.pdf', gantry_angle=0):
+def output_report(results=None, values=None, fail_oot=2.0, warn_oot=0.8, pdf_name='output_report.pdf', gantry_angle=0):
     print('Starting output report')
     doc = SimpleDocTemplate(pdf_name,pagesize=letter,
                         rightMargin=72,leftMargin=72,

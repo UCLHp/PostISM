@@ -98,9 +98,9 @@ def calc_metrics(i):
                 # Dose diff
                 d_diff = (d_mean - dref)/dref*100
                 # Conditional formatting
-                if abs(d_diff)>=1.0:
+                if abs(d_diff)>=2.0:
                     diff_color='red'
-                elif abs(d_diff)>=0.5:
+                elif abs(d_diff)>=0.8:
                     diff_color='orange'
                 else:
                     diff_color='green'
@@ -163,7 +163,7 @@ while True:
         # clear readings
         window['ADate'].Update('')
         window['GA'].Update('')
-        window['-ML-'].Update('No comment')
+        window['-ML-'].Update('Post-ISM')
         for i,E in enumerate(layers[0]):
             for r in range(1,3):
                 window['r'+str(i)+str(r)].update('') 
@@ -352,11 +352,11 @@ while True:
                 progress_bar.update_bar(9)
                 report_results = ana.output_results(results)
                 progress_bar.update_bar(10)
-                ana.output_report(report_results, values, 1.0, 0.5, os.path.join(report_dir,'01_output_report.pdf'))
+                ana.output_report(report_results, values, 2.0, 0.8, os.path.join(report_dir,'01_output_report.pdf'))
                 progress_bar.update_bar(11)
                 pdf_list = glob.glob(os.path.join(report_dir,'*.pdf'))
                 pdf_list.sort()
-                report_name = os.path.join(report_dir,'PostISM_Report.pdf')
+                report_name = os.path.join(report_dir,'_PostISM_Report.pdf')
                 ana.merge_reports(pdf_list, report_name)
                 progress_bar.update_bar(12)
             except:
@@ -481,7 +481,7 @@ while True:
             window['-Submit-'](disabled=True)
             window['ADate'].Update('')
             values['ADate']=''
-            window['-ML-'].Update('No comment')
+            window['-ML-'].Update('Post-ISM')
         else:
             window['-CSV_WRITE-'](disabled=True)
             window['-Submit-'](disabled=True)
